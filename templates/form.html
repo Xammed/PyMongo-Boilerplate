@@ -30,10 +30,10 @@ body,h1,h2,h3,h4,h5,h6,.w3-wide {font-family: "Montserrat", sans-serif;}
         <a href="/Hipster Home Base" class="w3-bar-item w3-button">Coffee</a>
         <a href="/Sakilla" class="w3-bar-item w3-button">Films</a>
         <a href="/Products" class="w3-bar-item w3-button">All</a>
+        <a href="/Shop" class="w3-bar-item w3-button">Shop</a>
     </div>
     
   </div>
-  <a href="/Shop" class="w3-bar-item w3-button">Become a Customer!</a>
   <a href="/Customers" class="w3-bar-item w3-button">Our Customers</a>
   <a href="#footer" class="w3-bar-item w3-button w3-padding">Contact</a> 
   <a href="javascript:void(0)" class="w3-bar-item w3-button w3-padding" onclick="document.getElementById('newsletter').style.display='block'">Newsletter</a> 
@@ -65,13 +65,52 @@ body,h1,h2,h3,h4,h5,h6,.w3-wide {font-family: "Montserrat", sans-serif;}
 
   <!-- Image header -->
   <div class="w3-display-container w3-container">
-    <img src="/home/msaroshkhan/NoSql DB/templates/jeans.jpg" alt="Jeans" style="width:100%">
-    <div class="w3-display-topleft w3-text-white" style="padding:24px 48px">
-      <h1 class="w3-jumbo w3-hide-small">New arrivals</h1>
-      <h1 class="w3-hide-small">COLLECTION 2020</h1>
-      <p><a href="/Products" class="w3-button w3-black w3-padding-large w3-large">SHOP NOW</a></p>
-    </div>
+    <form action="" method="POST" role="form">
+        <p><b>ADD CUSTOMER</b></p>
+        <p>Name:</p>
+        <input type="text" class="form-control" id="name" name="name" placeholder="What's your name?">
+        <p>Address: </p>
+        <input type="text" class="form-control" id="address" name="address" placeholder="Where do you live?">
+        <button type="submit" class="btn btn-success">Sign Up</button>
+    </form>
+
+    
   </div>
+
+  <div class="container">
+    <h2>Sign up with us</h2>
+    <form action="" method="POST" role="form">
+        { { form.csrf }}
+    <div class="form-group">
+          <label for="name">Name:</label>
+    <input type="text" class="form-control" id="name" name="name" placeholder="What's your name?">
+    
+    <label for="email">Email:</label>
+    <input type="text" class="form-control" id="email" name="email" placeholder="Your email will be used to contact you.">
+    
+    <label for="password">Password:</label>
+    <input type="password" class="form-control" id="password" name="password" placeholder="Enter a password.">
+    
+    </div>
+    <button type="submit" class="btn btn-success">Sign Up</button>
+    </form>{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    
+    {% for message in messages %}
+    {% if "Error" not in message[1]: %}
+    <div class="alert alert-info">
+                    <strong>Success! </strong> { { message[1] }}</div>
+    {% endif %}
+    
+    {% if "Error" in message[1]: %}
+    <div class="alert alert-warning">
+                    { { message[1] }}</div>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+    
+    </div>
 
 
 
@@ -82,6 +121,7 @@ body,h1,h2,h3,h4,h5,h6,.w3-wide {font-family: "Montserrat", sans-serif;}
 
   <!-- End page content -->
 </div>
+
 
 
 <script>
@@ -113,3 +153,4 @@ function w3_close() {
 
 </body>
 </html>
+

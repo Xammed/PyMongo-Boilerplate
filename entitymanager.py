@@ -13,12 +13,13 @@ class Customer:
         self.wishlist = []
 
 class Product:
-    def __init__(self, prod_id, name, description, price, supplier, restock_level):
+    def __init__(self, prod_id, name, description, price, supplier, stock, restock_level):
         self.prod_id = prod_id
         self.name = name
         self.description = description 
         self.price = price
         self.supplier = supplier
+        self.stock = stock
         self.restock_level = restock_level
         
 class Address:
@@ -87,7 +88,7 @@ class Procedurals:
         for i in range(n):
             movies.append(Product(ids[i], self.w[i], "movie about " + self.w[i], 
             round(random.uniform(0, random.uniform(100, 500)), 2), 
-            self.Suppliers[0], int(random.uniform(100, 500))))
+            self.Suppliers[0], int(random.uniform(500, 600)), int(random.uniform(100, 500))))
         return movies 
     
     def generate_spices(self, n):
@@ -100,7 +101,7 @@ class Procedurals:
         for i in range(n):
             spices.append(Product(ids[i], self.s[i].split("(")[0].strip(")"), "Latin: " + self.s[i], 
             round(random.uniform(0, random.uniform(100, 500)), 2), 
-            self.Suppliers[3], int(random.uniform(100, 500))))
+            self.Suppliers[3], int(random.uniform(500, 600)), int(random.uniform(100, 500))))
         return spices
 
     def generate_hippie_items(self, n):
@@ -114,8 +115,7 @@ class Procedurals:
             self.c[i] + " " + str(roast_level[i%3]) + " " + "Coffee", 
             str(roast_level[i%3]) + " coffee imported from " + self.c[i], 
             round(random.uniform(5, 21), 2), 
-            self.Suppliers[2], 
-            int(random.uniform(100, 500))))
+            self.Suppliers[2], int(random.uniform(500, 600)), int(random.uniform(100, 500))))
         return hippies 
 
     def generate_bikes(self, n):
@@ -128,18 +128,19 @@ class Procedurals:
                 "The " + self.l[i], 
                 "", 
                 round(random.uniform(100, 964.3),2),
-                self.Suppliers[1],
-                int(random.uniform(100, 500))
+                self.Suppliers[1],int(random.uniform(500, 600)), int(random.uniform(100, 500))
             ))
         return bikes
+
+    def generate_key(self):
+        self.id_starter += 10
+        return self.id_starter
         
         #NEED TO GENERATE BIKES. GET COLORS OR COOL WORDS
 
 
 
 class MongoManager:
-    def __init__(self):
-        pass
 
     p = Procedurals()
     people = p.generate_customers(50)
@@ -147,6 +148,11 @@ class MongoManager:
     spices = p.generate_spices(50)
     hippie = p.generate_hippie_items(50)
     bikes = p.generate_bikes(50)
+    dbHandle = 0
+
+    def __init__(self, db):
+        self.dbHandle = db
+    
     def initialize_mongo(self, db):
         for person in self.people:
             db.customers.insert_one(person.__dict__)
@@ -159,24 +165,41 @@ class MongoManager:
         for bike in self.bikes:
             db.adventureworks.insert_one(bike.__dict__)
         return 0
+    def add_Customer(self, name, address):
+        nameA = name.split(" ")
+        fname = ""
+        lname = ""
+        id = self.p.generate_key()
+        if len(nameA)<2:
+            lname = ""
+            fname = nameA[0]
+        else:
+            fname = nameA[0]
+            lname = nameA[len(nameA)-1]
+        print(fname, lname)
+        customer = Customer(id, fname, lname, address, 0)
+        self.dbHandle.customers.insert(customer.__dict__)
+
 
 class Commerce_Simulator:
 
     client = pymongo.MongoClient("mongodb+srv://GradDBTest:test@whatismongo.5azno.mongodb.net/<WhatIsMongo>?retryWrites=true&w=majority")
     db=client.WhatIsMongo
-
+    mm = MongoManager(db)
     def __init__(self):
         pass
 
     def begin_simulation(self):
-        mm = MongoManager()
-        #mm.initialize_mongo(self.db)
+        #self.mm.initialize_mongo(self.db)
         return 0
     def get_db_handle(self):
         return self.db
 
-CS = Commerce_Simulator()
-CS.begin_simulation()
+    def add_Customer(self, name, address):
+        self.mm.add_Customer(name, address)
+
+#CS = Commerce_Simulator()
+#CS.begin_simulation()
     
         
 
