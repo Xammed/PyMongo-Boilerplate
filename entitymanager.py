@@ -12,6 +12,19 @@ class Customer:
         self.activity = activity
         self.wishlist = []
 
+class Purchase:
+    def __init__(self, first_name, last_name, product_name, cust_id, prod_id, amount, date):
+        import datetime
+        self.first_name = first_name
+        self.last_name = last_name
+        self.product_name = product_name
+        self.cust_id = cust_id
+        self.prod_id = prod_id
+        self.amount = amount
+        self.date = date
+        self.shipping_date = self.date + datetime.timedelta(days=4)
+
+
 class Product:
     def __init__(self, prod_id, name, description, price, supplier, stock, restock_level):
         self.prod_id = prod_id
@@ -132,12 +145,27 @@ class Procedurals:
             ))
         return bikes
 
+    def generate_Suppliers(self):
+        suppliers = []
+        self.id_starter+=1
+        suppliers.append(Supplier(self.id_starter, "Sakilla Films", "Sack Man", "123-432-9867", "sakila@gmail.com"))
+        self.id_starter+=1
+        suppliers.append(Supplier(self.id_starter, "North Wind Traders", "Rob Stark, King of the North", "323-422-5807", "fknightwalkers@gmail.com"))
+        self.id_starter+=1
+        suppliers.append(Supplier(self.id_starter, "Adventure Works", "Stanley Boehm", "854-299-6534", "fknightwalkers@gmail.com"))
+        self.id_starter+=1
+        suppliers.append(Supplier(self.id_starter, "Hipster Depot", "Mathew JAMES Fiduk", "145-981-0769", "mark@gmail.com"))
+        self.id_starter+=1
+        return suppliers
+
+
+
+
     def generate_key(self):
         self.id_starter += 10
         return self.id_starter
+    
         
-        #NEED TO GENERATE BIKES. GET COLORS OR COOL WORDS
-
 
 
 class MongoManager:
@@ -148,6 +176,7 @@ class MongoManager:
     spices = p.generate_spices(50)
     hippie = p.generate_hippie_items(50)
     bikes = p.generate_bikes(50)
+    suppliers = p.generate_Suppliers()
     dbHandle = 0
 
     def __init__(self, db):
@@ -164,7 +193,15 @@ class MongoManager:
             db.vilkhafid.insert_one(hip.__dict__)
         for bike in self.bikes:
             db.adventureworks.insert_one(bike.__dict__)
+        for supplier in self.suppliers:
+            db.suppliers.insert_one(supplier.__dict__)
         return 0
+    
+    def initialize_Purchases(self, purchases):
+        for purchase in purchases:
+            self.dbHandle.purchases.insert_one(purchase.__dict__)
+        return 0
+
     def add_Customer(self, name, address):
         nameA = name.split(" ")
         fname = ""
@@ -191,12 +228,60 @@ class Commerce_Simulator:
 
     def begin_simulation(self):
         #self.mm.initialize_mongo(self.db)
+        #purchases = self.generate_Purchases()
+        #self.mm.initialize_Purchases(purchases)
         return 0
     def get_db_handle(self):
         return self.db
 
     def add_Customer(self, name, address):
         self.mm.add_Customer(name, address)
+
+    def generate_Purchases(self):
+        import datetime
+        purchases = []
+        s = self.db.sakila.find()
+        n = self.db.northwind.find()
+        a = self.db.adventureworks.find()
+        h = self.db.vilkhafid.find()
+        c = self.db.customers.find()
+        products = [s,n,a,h]
+        prod_hash = {s:"sakila", n:"northwind", a:"adventureworks", h:"vilkhafid"}
+        for product in products:
+            for i in range(50):
+                pid = product[i]["prod_id"]
+                pname = product[i]["name"]
+                old_stock = product[i]["stock"]
+                highest_amt = int(product[i]["stock"])
+                numpurchases = 0
+                if highest_amt > 0:
+                    numpurchases = random.randint(0, highest_amt)
+                new_stock = int(old_stock) - numpurchases
+                query = {"prod_id":pid}
+                self.db[prod_hash[product]].update_one(query, {"$set":{"stock":new_stock}})
+                count = 0
+                index = 0
+                customers = list(range(50))
+                random.shuffle(customers)
+                while count<numpurchases:
+                    customer = customers[index]
+                    quantity = random.randint(10, 20)
+                    cid = c[customer]["cust_id"]
+                    cfname = c[customer]["first_name"]
+                    clname = c[customer]["last_name"]
+                    old_activity = c[customer]["activity"]
+                    new_activity = old_activity + quantity
+                    query = {"cust_id":cid}
+                    self.db["customers"].update_one(query, {"$set":{"activity":new_activity}})
+                    date = datetime.datetime.today() - datetime.timedelta(days=random.randint(5, 60))
+                    purchases.append(Purchase(cfname, clname, pname, cid, pid, quantity, date))
+                    index += 1
+                    count += quantity
+                    print(prod_hash[product], count)
+        return purchases
+
+
+
 
 #CS = Commerce_Simulator()
 #CS.begin_simulation()

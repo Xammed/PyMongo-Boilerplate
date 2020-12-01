@@ -17,7 +17,7 @@ body,h1,h2,h3,h4,h5,h6,.w3-wide {font-family: "Montserrat", sans-serif;}
 <nav class="w3-sidebar w3-bar-block w3-collapse w3-top" style="z-index:3;width:250px; color:#563722" id="mySidebar">
   <div class="w3-container w3-display-container w3-padding-16" style="color:#563722">
     <i onclick="w3_close()" class="fa fa-remove w3-hide-large w3-button w3-display-topright"></i>
-    <img src="templates/HipsterDepot.png" width="200">
+    <img src={{ url_for('static', filename='HipsterDepot.png') }} width="200">
   </div>
   <div class="w3-padding-64 w3-large w3-text-grey" style="font-weight:bold">
 
@@ -30,11 +30,16 @@ body,h1,h2,h3,h4,h5,h6,.w3-wide {font-family: "Montserrat", sans-serif;}
         <a href="/Hipster Home Base" class="w3-bar-item w3-button">Coffee</a>
         <a href="/Sakilla" class="w3-bar-item w3-button">Films</a>
         <a href="/Products" class="w3-bar-item w3-button">All</a>
+        <a href="/InactivePs" class="w3-bar-item w3-button">Inactive Products</a>
     </div>
     
   </div>
+  <a href="/Suppliers" class="w3-bar-item w3-button">View Our Suppliers</a>
+  <a href="/Purchases" class="w3-bar-item w3-button">View Purchases</a>
+  <a href="/Restocking" class="w3-bar-item w3-button">View Restocking Orders</a>
   <a href="/Shop" class="w3-bar-item w3-button">Become a Customer!</a>
   <a href="/Customers" class="w3-bar-item w3-button">Our Customers</a>
+  <a href="/Inactives" class="w3-bar-item w3-button">Inactive Customers :(</a>
   <a href="#footer" class="w3-bar-item w3-button w3-padding">Contact</a> 
   <a href="javascript:void(0)" class="w3-bar-item w3-button w3-padding" onclick="document.getElementById('newsletter').style.display='block'">Newsletter</a> 
   <a href="#footer"  class="w3-bar-item w3-button w3-padding">Subscribe</a>
@@ -65,7 +70,7 @@ body,h1,h2,h3,h4,h5,h6,.w3-wide {font-family: "Montserrat", sans-serif;}
 
   <!-- Image header -->
   <div class="w3-display-container w3-container">
-    <img src="/home/msaroshkhan/NoSql DB/templates/jeans.jpg" alt="Jeans" style="width:100%">
+    <img src={{ url_for('static', filename="coffeeM.jpeg") }} width="1600">
     <div class="w3-display-topleft w3-text-white" style="padding:24px 48px">
       <h1 class="w3-jumbo w3-hide-small">New arrivals</h1>
       <h1 class="w3-hide-small">COLLECTION 2020</h1>

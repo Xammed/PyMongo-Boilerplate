@@ -27,6 +27,20 @@ class CustomerTable(Table):
     address = Col("Address")
     activity = Col("Activity")
 
+class SupplierTable(Table):
+    supp_name = Col("Supplier Name") 
+    contact_name = Col("Contact") 
+    contact_number = Col("Phone")
+    contact_email = Col("Email")
+
+class PurchaseTable(Table):
+    first_name = Col("First Name") 
+    last_name = Col("Last Name")
+    product_name = Col("Product")
+    amount = Col("quantity")
+    date = Col("Purchase Date")
+    shipping_date = Col("Shippng Date")
+
 @app.route('/Group2')
 def dropdown():
     return render_template("test.html")
@@ -56,11 +70,72 @@ def getHipster():
     table = ItemTable(cursor)
     return render_template("param'd.html", param = table)
 
+@app.route('/Suppliers')
+def getSuppliers():
+    cursor = db.suppliers.find()
+    table = SupplierTable(cursor)
+    return render_template("param'd.html", param = table)
+
 @app.route('/Customers')
 def getCustomers():
     cursor = db.customers.find().sort("cust_id", DESCENDING)
     table = CustomerTable(cursor)
     return render_template("param'd.html", param = table)
+
+@app.route('/Inactives')
+def getICustomers():
+    cursor = db.customers.find()
+    items = []
+    for customer in cursor:
+        if int(customer["activity"]) < 1500:
+            items.append(customer)
+    table = CustomerTable(items)
+    return render_template("param'd.html", param = table)
+
+@app.route('/InactivePs')
+def getIProducts():
+    s = db.sakila.find()
+    n = db.northwind.find()
+    a = db.adventureworks.find()
+    h = db.vilkhafid.find()
+    items = []
+    for i in range(50):
+        if((int(s[i]["stock"]) - int(s[i]["restock_level"])) > 100):
+            items.append(s[i])
+        if((int(n[i]["stock"]) - int(n[i]["restock_level"])) > 100):
+            items.append(n[i])
+        if((int(a[i]["stock"]) - int(a[i]["restock_level"])) > 100):
+            items.append(a[i])
+        if((int(h[i]["stock"]) - int(h[i]["restock_level"])) > 100):
+            items.append(h[i])
+    table = ItemTable(items)
+    return render_template("param'd.html", param = table)
+
+@app.route('/Purchases')
+def getPurchases():
+    cursor = db.purchases.find()
+    table = PurchaseTable(cursor)
+    return render_template("param'd.html", param = table)
+
+@app.route('/Restocking')
+def getRestocking():
+    s = db.sakila.find()
+    n = db.northwind.find()
+    a = db.adventureworks.find()
+    h = db.vilkhafid.find()
+    items = []
+    for i in range(50):
+        if(int(s[i]["stock"]) < int(s[i]["restock_level"])):
+            items.append(s[i])
+        if(int(n[i]["stock"]) < int(n[i]["restock_level"])):
+            items.append(n[i])
+        if(int(a[i]["stock"]) < int(a[i]["restock_level"])):
+            items.append(a[i])
+        if(int(h[i]["stock"]) < int(h[i]["restock_level"])):
+            items.append(h[i])
+    table = ItemTable(items)
+    return render_template("param'd.html", param = table)
+
 
 @app.route('/Products')
 def getAll():
@@ -77,7 +152,8 @@ def getAll():
     table = ItemTable(items)
     return render_template("param'd.html", param = table)
 
-@app.route("/Shop")
+
+@app.route('/Shop')
 def shop():
     return render_template("form.html")
 

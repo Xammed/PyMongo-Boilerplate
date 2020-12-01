@@ -77,40 +77,7 @@ body,h1,h2,h3,h4,h5,h6,.w3-wide {font-family: "Montserrat", sans-serif;}
     
   </div>
 
-  <div class="container">
-    <h2>Sign up with us</h2>
-    <form action="" method="POST" role="form">
-        { { form.csrf }}
-    <div class="form-group">
-          <label for="name">Name:</label>
-    <input type="text" class="form-control" id="name" name="name" placeholder="What's your name?">
-    
-    <label for="email">Email:</label>
-    <input type="text" class="form-control" id="email" name="email" placeholder="Your email will be used to contact you.">
-    
-    <label for="password">Password:</label>
-    <input type="password" class="form-control" id="password" name="password" placeholder="Enter a password.">
-    
-    </div>
-    <button type="submit" class="btn btn-success">Sign Up</button>
-    </form>{% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    
-    {% for message in messages %}
-    {% if "Error" not in message[1]: %}
-    <div class="alert alert-info">
-                    <strong>Success! </strong> { { message[1] }}</div>
-    {% endif %}
-    
-    {% if "Error" in message[1]: %}
-    <div class="alert alert-warning">
-                    { { message[1] }}</div>
-    {% endif %}
-    {% endfor %}
-    {% endif %}
-    {% endwith %}
-    
-    </div>
+ 
 
 
 
